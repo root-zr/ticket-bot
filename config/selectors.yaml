@@ -1,0 +1,35 @@
+# ─── Selectors for damai.cn pages ───
+# Isolated here so they can be updated without touching code
+# when damai changes their DOM structure.
+
+login:
+  qr_code_image: ".login-icon.qrcode-icon"
+  login_success_indicator: ".header-user-name"
+
+event_page:
+  price_tier_list: ".perform__order__select .select_right_list_item"
+  price_tier_active_class: "select_right_list_item--active"
+  quantity_input: ".cafeine-num-input"
+  quantity_plus_btn: ".cafeine-num-plus"
+  buy_button: "#buybtn"
+  buy_button_text_active: "立即购买"
+  buy_button_text_coming_soon: "即将开抢"
+  buy_button_text_sold_out: "已售罄"
+  buy_button_text_select: "选座购买"
+
+order_page:
+  viewer_list: ".buyer-list .buyer-list-item"
+  viewer_checkbox: ".buyer-list-item input[type='checkbox']"
+  agree_checkbox: ".agree-check input[type='checkbox']"
+  submit_button: 'button:text("提交订单")'
+  submit_button_alt: ".submit-wrapper .submit-btn"
+
+captcha:
+  container: "#baxia-dialog"
+  slider_handle: ".nc_iconfont.btn_slide"
+  slider_bg: ".nc-bg"
+  iframe: "iframe[src*='captcha']"
+
+payment:
+  page_indicator: ".pay-button, #payButton, .payment-confirm"
+  alipay_qr: ".alipay-qrcode img"

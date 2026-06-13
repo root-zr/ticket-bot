@@ -1,0 +1,81 @@
+# ─── Browser Settings ───
+browser:
+  headless: true                    # Override with DAMAI_HEADLESS=false for debugging
+  slow_mo: 0                        # ms delay between actions (debugging)
+  timeout: 30000                    # Default navigation timeout (ms)
+  viewport:
+    width: 1920
+    height: 1080
+  user_agent: ""                    # Empty = use stealth default
+  proxy: ""                         # e.g., "http://user:pass@host:port"
+
+# ─── Target Event ───
+event:
+  url: "${DAMAI_EVENT_URL}"         # Required: event detail page URL
+  ticket_count: 1                   # Number of tickets (1-6)
+  price_tier: 0                     # 0-indexed: 0=cheapest, 1=next, etc.
+  price_text: ""                    # e.g., "580元" — overrides price_tier if set
+
+# ─── Timing ───
+timing:
+  sale_time: "${DAMAI_SALE_TIME}"   # ISO format: "2026-06-15T10:00:00+08:00"
+  ntp_server: "ntp.aliyun.com"      # NTP server for time sync
+  pre_load_seconds: 30              # Navigate to page this many seconds before sale
+  refresh_interval_ms: 500          # Page refresh interval in final countdown (ms)
+  retry_interval_ms: 1000           # Retry interval after sold-out / error
+
+# ─── Anti-Detection ───
+anti_detect:
+  stealth_mode: true                # Apply stealth JS patches
+  humanize_actions: true            # Add random delays to clicks/typing
+  min_action_delay_ms: 50           # Minimum delay between actions
+  max_action_delay_ms: 200          # Maximum delay between actions
+  captcha_solver: "none"            # "none" | "2captcha" | "cjy" (超级鹰) | "manual"
+  captcha_api_key: "${CAPTCHA_API_KEY}"
+
+# ─── Notifications ───
+notifications:
+  enabled: true
+  channels:
+    - type: "wechat_work"
+      webhook_url: "${WECHAT_WEBHOOK_URL}"
+      enabled: false
+    - type: "dingtalk"
+      webhook_url: "${DINGTALK_WEBHOOK_URL}"
+      secret: "${DINGTALK_SECRET}"
+      enabled: false
+    - type: "telegram"
+      bot_token: "${TELEGRAM_BOT_TOKEN}"
+      chat_id: "${TELEGRAM_CHAT_ID}"
+      enabled: false
+    - type: "bark"
+      server: "https://api.day.app"
+      device_key: "${BARK_DEVICE_KEY}"
+      enabled: false
+  events:                           # Which events trigger notifications
+    - "order_success"
+    - "captcha_required"
+    - "error"
+    - "sold_out"
+
+# ─── Persistence ───
+persistence:
+  cookies_file: "data/cookies/damai_cookies.json"
+  encrypt_cookies: true
+  encryption_key: "${COOKIE_ENCRYPT_KEY}"
+
+# ─── Logging ───
+logging:
+  level: "INFO"                     # DEBUG | INFO | WARNING | ERROR
+  file: "data/logs/bot_{time}.log"
+  rotation: "10 MB"
+  screenshot_on_error: true
+  screenshot_dir: "data/screenshots"
+
+# ─── Retry Policy ───
+retry:
+  max_attempts: 50                  # Max total retry attempts for buy flow
+  base_delay_ms: 500
+  max_delay_ms: 3000
+  backoff_multiplier: 1.5
+  jitter: true

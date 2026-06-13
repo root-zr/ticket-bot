@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python *)",
+      "Bash(docker --version)",
+      "Bash(docker compose *)",
+      "Bash(USE_CHINA_MIRROR=true PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/ PLAYWRIGHT_DOWNLOAD_HOST=https://npmmirror.com/playwright/ docker compose build *)",
+      "Bash(USE_CHINA_MIRROR=true PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/ PLAYWRIGHT_DOWNLOAD_HOST= docker compose build *)",
+      "Bash(PLAYWRIGHT_DOWNLOAD_HOST=https://playwright.oss-cn-beijing.aliyuncs.com docker compose build --build-arg PLAYWRIGHT_DOWNLOAD_HOST=https://playwright.oss-cn-beijing.aliyuncs.com)"
+    ]
+  }
+}

@@ -1,0 +1,41 @@
+# ─── Python ───
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ─── Environment ───
+.env
+.env.local
+
+# ─── Data (runtime generated) ───
+data/cookies/
+data/screenshots/
+data/logs/
+
+# ─── IDE ───
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ─── OS ───
+.DS_Store
+Thumbs.db
+
+# ─── Testing ───
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ─── Docker ───
+docker-compose.override.yml
+
+# ─── Virtual env ───
+venv/
+.venv/

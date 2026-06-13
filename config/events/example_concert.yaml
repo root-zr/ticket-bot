@@ -1,0 +1,12 @@
+# ─── Example event override config ───
+# Copy this file and modify for your specific event.
+# Usage: python -m src.main --event-config config/events/my_concert.yaml
+
+event:
+  url: "https://detail.damai.cn/item.htm?id=12345678"
+  ticket_count: 2
+  price_text: "880元"              # Exact price text to match
+
+timing:
+  sale_time: "2026-06-15T10:00:00+08:00"
+  pre_load_seconds: 30

@@ -1,0 +1,64 @@
+# ─── Build-time arguments ───
+# Set USE_CHINA_MIRROR=true to use Aliyun mirrors for apt/pip/playwright
+#   docker compose build --build-arg USE_CHINA_MIRROR=true
+# Or create a docker-compose.override.yml with the args set.
+
+x-build: &default-build
+  context: .
+  dockerfile: Dockerfile
+  args:
+    - USE_CHINA_MIRROR=${USE_CHINA_MIRROR:-false}
+    - PIP_INDEX_URL=${PIP_INDEX_URL:-https://pypi.org/simple}
+    - PLAYWRIGHT_DOWNLOAD_HOST=${PLAYWRIGHT_DOWNLOAD_HOST:-https://playwright.azureedge.net}
+
+services:
+  # ── Main bot service ──
+  damai-bot:
+    build: *default-build
+    container_name: damai-bot
+    restart: "no"                    # One-shot: don't restart after completion
+
+    env_file:
+      - .env
+
+    volumes:
+      # Persist cookies and logs across runs
+      - ./data/cookies:/app/data/cookies
+      - ./data/screenshots:/app/data/screenshots
+      - ./data/logs:/app/data/logs
+      # Mount config for easy editing without rebuild
+      - ./config:/app/config:ro
+
+    # Shared memory for Chromium (prevents crashes)
+    shm_size: "2gb"
+
+    # Use host network for lowest latency (critical for timing)
+    network_mode: host
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: "2.0"
+
+  # ── Optional: Login helper service ──
+  # Run this first to get cookies, then run the main bot
+  # Usage: docker compose --profile tools run --rm damai-login
+  damai-login:
+    build: *default-build
+    container_name: damai-login
+    entrypoint: ["python", "-m", "scripts.login_helper"]
+    env_file:
+      - .env
+    volumes:
+      - ./data/cookies:/app/data/cookies
+    environment:
+      - DAMAI_HEADLESS=false        # Must be visible for QR code scanning
+      # For X11 forwarding (Linux desktop only):
+      # - DISPLAY=${DISPLAY}
+    # volumes:
+    #   - /tmp/.X11-unix:/tmp/.X11-unix
+    network_mode: host
+    profiles:
+      - tools                       # Only runs with: docker compose --profile tools up damai-login
