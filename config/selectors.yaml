@@ -3,8 +3,27 @@
 # when damai changes their DOM structure.
 
 login:
-  qr_code_image: ".login-icon.qrcode-icon"
-  login_success_indicator: ".header-user-name"
+  # The login form is inside an iframe (ipassport.damai.cn/mini_login.htm)
+  login_iframe_url: "ipassport.damai.cn"
+  # QR code tab click targets — switch from password/SMS to QR code scan mode
+  qr_code_tabs:
+    - 'div:text("扫码登录")'
+    - '.login-tabs-tab:text("扫码登录")'
+  # QR code container — after clicking QR tab, a <canvas> renders the QR code
+  # The QR code is drawn on a <canvas> inside #qrcode-img, not an <img> tag
+  qr_code_image_selectors:
+    - "#qrcode-img"
+    - ".qrcode-img"
+    - ".qrcode-login canvas"
+    - "#qrcode-img canvas"
+  # Elements that indicate successful login on damai.cn homepage
+  # (after scanning QR code, the page redirects from passport.damai.cn)
+  login_success_indicators:
+    - 'a:text("退出登录")'
+    - '.out-login'
+    - '.list-login'
+    - '.login-user'
+    - '.span-user'
 
 event_page:
   price_tier_list: ".perform__order__select .select_right_list_item"

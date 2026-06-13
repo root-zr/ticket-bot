@@ -28,6 +28,7 @@ class BrowserConfig:
     viewport: ViewportConfig = field(default_factory=ViewportConfig)
     user_agent: str = ""
     proxy: str = ""
+    mobile_emulation: bool = False  # Use mobile viewport + UA to bypass desktop blocks
 
 
 @dataclass

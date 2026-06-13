@@ -54,30 +54,20 @@ class LoginAction:
         return await self._interactive_login()
 
     async def _verify_session(self) -> bool:
-        """Check if the current session is valid by visiting homepage."""
-        page = self.browser.page
-        try:
-            await page.goto(self.HOME_URL, wait_until="domcontentloaded")
-            await human_delay(500, 1000)
+        """Check if the current session is valid.
 
-            # Check for login indicator (username displayed in header)
-            selectors = self.config.selectors.login
-            indicator = selectors.get("login_success_indicator", ".header-user-name")
+        Damai's homepage UI is unreliable for detecting login state
+        with restored cookies. We trust the cookie file if it exists
+        and is fresh. The real verification happens on the event page.
+        """
+        # If cookies exist and haven't expired, assume logged in.
+        # The event page will reveal the truth (ticket info visible or not).
+        if self.cookie_store.exists() and not self.cookie_store.is_expired():
+            logger.info("Cookies found on disk — session assumed valid")
+            return True
 
-            element = await page.query_selector(indicator)
-            if element and await element.is_visible():
-                return True
-
-            # Alternative: check if login button is NOT visible
-            login_btn = await page.query_selector(".header-login-btn, .login-btn")
-            if login_btn is None:
-                return True
-
-            return False
-
-        except Exception as e:
-            logger.warning(f"Session verification failed: {e}")
-            return False
+        logger.info("No valid cookies found — requires interactive login")
+        return False
 
     async def _interactive_login(self) -> bool:
         """Navigate to login page and wait for user to scan QR code."""

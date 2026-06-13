@@ -45,6 +45,7 @@ services:
   # ── Optional: Login helper service ──
   # Run this first to get cookies, then run the main bot
   # Usage: docker compose --profile tools run --rm damai-login
+  # QR code will be saved to ./data/screenshots/qr_code.png
   damai-login:
     build: *default-build
     container_name: damai-login
@@ -53,12 +54,10 @@ services:
       - .env
     volumes:
       - ./data/cookies:/app/data/cookies
+      - ./data/screenshots:/app/data/screenshots
     environment:
-      - DAMAI_HEADLESS=false        # Must be visible for QR code scanning
-      # For X11 forwarding (Linux desktop only):
-      # - DISPLAY=${DISPLAY}
-    # volumes:
-    #   - /tmp/.X11-unix:/tmp/.X11-unix
+      # Login helper auto-detects headless mode when no DISPLAY
+      - DAMAI_HEADLESS=true
     network_mode: host
     profiles:
       - tools                       # Only runs with: docker compose --profile tools up damai-login

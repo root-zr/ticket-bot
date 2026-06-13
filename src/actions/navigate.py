@@ -26,15 +26,24 @@ class NavigateAction:
         self._page_info: dict = {}
 
     async def go_to_event_page(self) -> bool:
-        """Navigate to the event detail page and wait for it to load."""
+        """Navigate to the event detail page and wait for it to load.
+
+        First visits the damai homepage to establish a session context,
+        then navigates to the event page. Skipping the homepage can cause
+        damai to serve a 404 honeypot page.
+        """
         page = self.browser.page
         event_url = self.config.event.url
 
-        logger.info(f"Navigating to event page: {event_url}")
-
         try:
+            # Step 1: Visit homepage to activate the session
+            logger.info("Warming up session via homepage...")
+            await page.goto("https://www.damai.cn/", wait_until="domcontentloaded")
+            await human_delay(500, 1000)
+
+            # Step 2: Navigate to event page
+            logger.info(f"Navigating to event page: {event_url}")
             await page.goto(event_url, wait_until="domcontentloaded")
-            # Wait for key event content to appear
             await human_delay(1000, 2000)
             await human_scroll(page, "down", 300)  # Scroll to ticket section
             logger.info("✅ Event page loaded")

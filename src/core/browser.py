@@ -53,6 +53,7 @@ class BrowserManager:
         """Launch browser, create stealth context, and return a new page."""
         logger.info(
             f"Starting browser — headless={self.browser_config.headless}"
+            f" mobile={self.browser_config.mobile_emulation}"
         )
 
         self._playwright = await async_playwright().start()
@@ -72,16 +73,35 @@ class BrowserManager:
         )
 
         # Create context with stealth settings
-        context_kwargs = {
-            "viewport": {
-                "width": self.browser_config.viewport.width,
-                "height": self.browser_config.viewport.height,
-            },
-            "locale": "zh-CN",
-            "timezone_id": "Asia/Shanghai",
-        }
-        if self.browser_config.user_agent:
-            context_kwargs["user_agent"] = self.browser_config.user_agent
+        if self.browser_config.mobile_emulation:
+            # Spoof a mobile browser to bypass damai's "请移步手机端购买"
+            # desktop block. Use desktop viewport with mobile UA —
+            # this keeps the desktop page layout (with tier selectors)
+            # while tricking the server into thinking we're on mobile.
+            context_kwargs = {
+                "viewport": {
+                    "width": self.browser_config.viewport.width,
+                    "height": self.browser_config.viewport.height,
+                },
+                "user_agent": (
+                    "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) "
+                    "AppleWebKit/605.1.15 (KHTML, like Gecko) "
+                    "Version/17.0 Mobile/15E148 Safari/604.1"
+                ),
+                "locale": "zh-CN",
+                "timezone_id": "Asia/Shanghai",
+            }
+        else:
+            context_kwargs = {
+                "viewport": {
+                    "width": self.browser_config.viewport.width,
+                    "height": self.browser_config.viewport.height,
+                },
+                "locale": "zh-CN",
+                "timezone_id": "Asia/Shanghai",
+            }
+            if self.browser_config.user_agent:
+                context_kwargs["user_agent"] = self.browser_config.user_agent
 
         # Try to restore cookies from saved storage state
         cookies_path = Path(self.config.persistence.cookies_file)

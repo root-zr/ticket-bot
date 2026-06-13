@@ -6,8 +6,9 @@ browser:
   viewport:
     width: 1920
     height: 1080
-  user_agent: ""                    # Empty = use stealth default
+  user_agent: ""                    # Empty = use default
   proxy: ""                         # e.g., "http://user:pass@host:port"
+  mobile_emulation: false           # Desktop mode; if blocked, bot clicks through popup
 
 # ─── Target Event ───
 event:
