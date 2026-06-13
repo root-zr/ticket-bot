@@ -18,7 +18,6 @@ data/logs
 *.egg-info
 dist
 build
-tests
 README.md
 CLAUDE.md
 LICENSE
